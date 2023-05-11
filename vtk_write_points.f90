@@ -14,7 +14,7 @@
 !    You should have received a copy of the GNU General Public License
 !    along with SLIM-Fast in /src/gpl.txt.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBROUTINE vtk_write_points(P,np_active, np,icycle,vtk_file, dx, dy,nx,ny,maxZ, dem)
+SUBROUTINE vtk_write_points(P,np_active, np,icycle,vtk_file, dx, dy,nx,ny,maxZ,dem,nind)
 REAL*8                 :: P(:,:)
 INTEGER                :: icycle
 INTEGER*4              :: np_active
@@ -26,11 +26,13 @@ INTEGER*4              :: ny
 REAL*8                 :: maxZ
 REAL*8                 :: DEM(:,:)
 CHARACTER (LEN=200)    :: vtk_file
+INTEGER*4              :: nind
 
 INTEGER*4 i,j,k, ijk, debug,l, nxyz,nxyzp1,Px, Py
 CHARACTER*1 lf
 CHARACTER*12 num1, num2, num3
 CHARACTER*8 ctime
+CHARACTER*2 indstr
 real*8 number,X,Clocx, Clocy, Dxl, Dxu, Dyl, Dyu
 
 debug = 0
@@ -94,6 +96,15 @@ write(15) "SCALARS ID float"//lf
 Write(15) "LOOKUP_TABLE default"//lf
 write(15) (real(P(j,11),kind=4), j=1,np_active)
 write(15) lf
+if (nind > 0) then
+  do ii = 1, nind
+    write(indstr,'(i2.2)') ii
+    write(15) "SCALARS ind"//indstr//"_age float"//lf
+    Write(15) "LOOKUP_TABLE default"//lf
+    write(15) (real(P(j,17+ii),kind=4), j=1,np_active)
+    write(15) lf
+  end do
+end if
 CLOSE(15)
 
 
